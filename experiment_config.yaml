@@ -1,0 +1,53 @@
+# SEAL Watermark Experiment Configuration
+# =========================================
+
+# Dataset sizes
+n_wm: 500          # Number of watermarked images
+n_neg: 1000        # Number of negative images
+
+# Model identifiers
+# NOTE: Using ModelScope for SD 2.1 since HuggingFace version is gated
+# This is the EXACT setup that produced the verified results
+sd_model: "AI-ModelScope/stable-diffusion-2-1-base"  # ModelScope (no auth needed)
+sd_model_hf: "stabilityai/stable-diffusion-2-1"  # HuggingFace (gated, requires token)
+use_modelscope: true  # Set to false to try HuggingFace instead
+modelscope_cache_dir: "./models_cache"  # Cache directory for ModelScope downloads
+
+captioner_model: "Salesforce/blip2-flan-t5-xl"
+embedder_model: "kasraarabi/finetuned-caption-embedding"
+fallback_embedder: "sentence-transformers/paraphrase-mpnet-base-v2"
+
+# SEAL parameters (from paper)
+n_patches: 1024           # K: Number of patches
+bits_per_patch: 7         # B: Bits per SimHash
+patch_size: 2             # Patch size in latent space
+tau: 2.3                  # Distance threshold (Supplement §9.1)
+
+# Generation parameters
+gen_steps: 50             # Diffusion steps
+inv_steps: 50             # Inversion steps
+guidance_scale: 7.5       # CFG scale
+
+# Security
+secret_salt: "seal_watermark_salt_2024"
+
+# Per-patch search (Algorithm 3)
+n_search_captions: 16     # Caption variations for detection
+
+# Detection
+detection_threshold: 12   # Minimum patches to match
+
+# Prompts
+prompt_dataset: "Gustavosta/Stable-Diffusion-Prompts"
+shuffle_seed: 42
+global_seed: 0
+
+# Transforms (Supplement §9.3)
+transforms:
+  - Original
+  - Rotation_75
+  - JPEG_25
+  - Crop_Scale_0.75
+  - Gaussian_Blur_8x8
+  - Gaussian_Noise_0.1
+  - Brightness_U06
