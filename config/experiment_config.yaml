@@ -1,0 +1,37 @@
+experiment:
+  name: "seal_reproduction"
+  seed: 42
+
+models:
+  stable_diffusion: "stable-diffusion-v1-5/stable-diffusion-v1-5"
+  captioner: "Salesforce/blip2-flan-t5-xl"
+  embedder: "sentence-transformers/paraphrase-mpnet-base-v2"
+
+watermark:
+  n_patches: 1024
+  bits_per_patch: 7
+  patch_size: 2
+  tau: 2.3
+  n_search_captions: 16
+  secret_salt: "seal_watermark_salt_2024"
+
+generation:
+  n_wm: 500
+  n_neg: 1000
+  gen_steps: 50
+  inv_steps: 50
+  guidance_scale: 7.5
+
+transforms:
+  - Original
+  - Rotation_75
+  - JPEG_25
+  - Crop_Scale_0.75
+  - Gaussian_Blur_8x8
+  - Gaussian_Noise_0.1
+  - Brightness_U06
+
+output:
+  base_dir: "./results"
+  save_images: true
+  save_metadata: true
